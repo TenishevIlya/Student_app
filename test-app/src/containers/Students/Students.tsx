@@ -21,27 +21,31 @@ class Students extends Component<IStudentProps, IStudentState> {
     };
   }
 
-  componentDidMount() {
-    this.setState({
-      students: this.props.allStudents.concat(this.props.graduated),
-    });
-    this.setState({ showCertainGroup: this.props.flag });
-    //document.location.reload(true);
-  }
+  // componentDidMount() {
+  //   this.setState({
+  //     students: this.props.allStudents.concat(this.props.graduated),
+  //   });
+  //   this.setState({ showCertainGroup: this.props.flag });
+  //   //document.location.reload(true);
+  // }
 
-  componentDidUpdate() {
-    //if (history.location.pathname === "/") {
-    fetch("http://localhost:9000/api/data")
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        //window.location.reload();
-        //setAllStudents(data);
-      });
-    //}
-  }
+  // componentDidUpdate() {
+  //   console.log(this.props.allStudents);
+  // }
+
+  // componentDidUpdate() {
+  //   //if (history.location.pathname === "/") {
+  //   fetch("http://localhost:9000/api/data")
+  //     .then((res) => {
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //       //window.location.reload();
+  //       //setAllStudents(data);
+  //     });
+  //   //}
+  // }
 
   render() {
     return (
@@ -62,7 +66,40 @@ class Students extends Component<IStudentProps, IStudentState> {
             </tr>
           </thead>
           <tbody>
-            {this.props.users !== undefined &&
+            {this.props.allStudents !== undefined
+              ? this.props.allStudents.map((student: any) => {
+                  const directionName = setDirectionName(
+                    student.Direction_code
+                  );
+                  const ticketIssueDate = formatDate(
+                    student.Date_of_issue_of_student_ticket
+                  );
+                  const birthDate = formatDate(student.Date_of_birth);
+                  const yearDifference =
+                    new Date().getFullYear() -
+                    student.Date_of_issue_of_student_ticket.slice(0, 4);
+                  const fullGroupNumber =
+                    yearDifference > 4
+                      ? `4${student.Group_number}`
+                      : `${yearDifference}${student.Group_number}`;
+                  return (
+                    <RowComponent
+                      key={student.Id}
+                      numberOfGroup={`${fullGroupNumber}`}
+                      directionCode={directionName}
+                      surname={student.Surname}
+                      name={student.Name}
+                      patronymic={student.Patronymic}
+                      gender={student.Gender}
+                      dateOfBirth={birthDate}
+                      numberOfStudentTicket={student.Number_of_student_ticket}
+                      dateOfIssueOfStudentTicket={ticketIssueDate}
+                      isAHeadOfGroup={student.Is_a_head_of_group}
+                    />
+                  );
+                })
+              : null}
+            {/* {this.props.users !== undefined &&
             this.props.graduatedFromCurrentGroup !== undefined
               ? this.props.users
                   .concat(this.props.graduatedFromCurrentGroup)
@@ -130,7 +167,7 @@ class Students extends Component<IStudentProps, IStudentState> {
                       isAHeadOfGroup={student.Is_a_head_of_group}
                     />
                   );
-                })}
+                })} */}
           </tbody>
         </Table>
       </div>

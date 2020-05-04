@@ -1,9 +1,9 @@
 export interface IStudentProps {
   allStudents: any;
-  flag: boolean;
-  users: any;
-  graduated: any;
-  graduatedFromCurrentGroup: any;
+  // flag: boolean;
+  // users: any;
+  // graduated: any;
+  // graduatedFromCurrentGroup: any;
 }
 export interface IStudentState {
   students: any;

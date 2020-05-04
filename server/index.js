@@ -20,7 +20,8 @@ const connection = mysqlRoute
   .promise();
 
 connection.query(
-  "SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY number_of_course.Course_number,student.Group_number,Surname",
+  "SELECT * FROM student ORDER BY Date_of_issue_of_student_ticket DESC,student.Group_number,Surname",
+  //"SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY number_of_course.Course_number,student.Group_number,Surname",
   (err, results, fields) => {
     CONTENT = results;
     error = err;
@@ -37,7 +38,8 @@ app.get("/api/yearChange", (req, res) => {
 app.get("/api/data", (req, res) => {
   console.log(req.body);
   connection.query(
-    "SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY number_of_course.Course_number,student.Group_number,Surname",
+    "SELECT * FROM student ORDER BY Date_of_issue_of_student_ticket DESC,student.Group_number,Surname",
+    //"SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY number_of_course.Course_number,student.Group_number,Surname",
     (err, results, fields) => {
       CONTENT = results;
     }
@@ -46,11 +48,14 @@ app.get("/api/data", (req, res) => {
 });
 
 app.get("/filterGroup", (req, res) => {
-  const groupNumber = req.headers.group.slice(1, 3);
-  const course = req.headers.group[0];
+  console.log(req.headers.group);
+  const group = req.headers.group;
+  //const groupNumber = req.headers.group.slice(1, 3);
+  //const course = req.headers.group[0];
   connection
     .query(
-      `SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Group_number = ${groupNumber} and number_of_course.Course_number = ${course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY student.Group_number,Surname`
+      `SELECT * FROM student WHERE student.Group_number = ${group} ORDER BY student.Group_number,Surname`
+      //`SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Group_number = ${groupNumber} and number_of_course.Course_number = ${course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY student.Group_number,Surname`
     )
     .then((result) => {
       res.status(200).json(result[0]);
@@ -63,7 +68,8 @@ app.get("/filterGroup", (req, res) => {
 app.get("/groupNumbers", (req, res) => {
   connection
     .query(
-      `SELECT DISTINCT Course_number,Group_number FROM student JOIN number_of_course WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education GROUP BY Course_number,Group_number`
+      "SELECT Group_number FROM student GROUP BY Group_number"
+      //`SELECT DISTINCT Course_number,Group_number FROM student JOIN number_of_course WHERE student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education GROUP BY Course_number,Group_number`
     )
     .then((results) => {
       res.status(200).json(results[0]);
