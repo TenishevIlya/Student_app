@@ -280,7 +280,11 @@ const Layout = () => {
     } else {
       fetch("http://localhost:9000/filterGroup", {
         method: "GET",
-        headers: { group: `${currentGroup.slice(1, 3)}` },
+        headers: {
+          group: `${currentGroup.slice(1, 3)}`,
+          year: `${new Date().getFullYear() - currentGroup.slice(0, 1)}-09-01`,
+          course: `${currentGroup[0]}`,
+        },
         cache: "reload",
       })
         .then((res) => {

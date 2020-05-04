@@ -48,13 +48,13 @@ app.get("/api/data", (req, res) => {
 });
 
 app.get("/filterGroup", (req, res) => {
-  console.log(req.headers.group);
+  console.log(req.headers.year);
   const group = req.headers.group;
-  //const groupNumber = req.headers.group.slice(1, 3);
-  //const course = req.headers.group[0];
+  const year = req.headers.year;
+  const course = req.headers.course;
   connection
     .query(
-      `SELECT * FROM student WHERE student.Group_number = ${group} ORDER BY student.Group_number,Surname`
+      `SELECT * FROM student WHERE student.Group_number = ${group} and (student.Date_of_issue_of_student_ticket = '${year}' OR (student.Date_of_issue_of_student_ticket < '${year}' AND ${course} = 4)) ORDER BY student.Group_number,Surname`
       //`SELECT * FROM student JOIN number_of_course ON Course_number WHERE student.Group_number = ${groupNumber} and number_of_course.Course_number = ${course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY student.Group_number,Surname`
     )
     .then((result) => {
