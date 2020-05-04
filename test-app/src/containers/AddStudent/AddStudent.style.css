@@ -1,0 +1,9 @@
+.form-header {
+  text-align: center;
+  margin: 10px 0 10px 0;
+}
+.radio-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
