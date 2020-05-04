@@ -1,5 +1,5 @@
 export interface IAddStudentState {
-  groupNumbers: TGroupNumber[];
+  groupNumbers: string[];
   surname: TFormField;
   name: TFormField;
   patronymic: TFormField;

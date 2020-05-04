@@ -8,6 +8,8 @@ import { Switch, Route, Link, useHistory } from "react-router-dom";
 
 import { TStudent } from "../containers/Students/Students.type";
 
+import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
+
 import "./Layout.style.css";
 
 const Layout = () => {
@@ -42,11 +44,7 @@ const Layout = () => {
       })
       .then((data) => {
         let groups: string[] = [];
-        data.forEach((group: any) => {
-          for (let i = 1; i <= 4; i++) {
-            groups.push(`${i}${group.Group_number}`);
-          }
-        });
+        setAllBachelorGroups(data, groups);
         setAllGroups(groups.sort());
       });
   }, []);

@@ -3,6 +3,7 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { IAddStudentState } from "./AddStudent.type";
 import "./AddStudent.style.css";
 
+import { setAllBachelorGroups } from "../../utils/setAllBachelorGroups";
 import { isRussianLanguage } from "../../utils/addStudentValidations";
 import { Link } from "react-router-dom";
 
@@ -55,7 +56,9 @@ class AddStudent extends Component<{}, IAddStudentState> {
         return res.json();
       })
       .then((data) => {
-        this.setState({ groupNumbers: data });
+        let groups: string[] = [];
+        setAllBachelorGroups(data, groups);
+        this.setState({ groupNumbers: groups.sort() });
       });
   }
 
@@ -209,24 +212,17 @@ class AddStudent extends Component<{}, IAddStudentState> {
                   }
                 >
                   {this.state.groupNumbers?.map((group, index) => {
-                    const fullGroupNumber = `${group.Course_number}${group.Group_number}`;
                     if (index === 0) {
                       return (
-                        <option
-                          key={`${group.Course_number}$#!@!${group.Group_number}`}
-                          value={`${group.Course_number}${group.Group_number}`}
-                        >
-                          {fullGroupNumber}
+                        <option key={`${group}$#!@!`} value={`${group}`}>
+                          {group}
                         </option>
                       );
                     }
                     if (index !== 0) {
                       return (
-                        <option
-                          key={`${group.Course_number}$#!@!${group.Group_number}`}
-                          value={`${group.Course_number}${group.Group_number}`}
-                        >
-                          {fullGroupNumber}
+                        <option key={`${group}$#!@!`} value={`${group}`}>
+                          {group}
                         </option>
                       );
                     }
