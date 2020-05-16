@@ -3,13 +3,25 @@ export type TAction = {
   payload?: any;
 };
 
-const dataReducer = (state: any = [], action: TAction) => {
+export const dataReducer = (
+  state: string = "All students",
+  action: TAction
+) => {
   switch (action.type) {
-    case "CHANGED_DATA":
+    case "CHANGE_GROUP":
       return action.payload;
     default:
       return state;
   }
 };
 
-export default dataReducer;
+export const locationReducer = (state: string = "/", action: TAction) => {
+  switch (action.type) {
+    case "CHANGE_LOCATION":
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+//export default { dataReducer, groupReducer };

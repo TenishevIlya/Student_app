@@ -11,6 +11,8 @@ import { TStudent } from "../containers/Students/Students.type";
 import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
 
 import "./Layout.style.css";
+import store from "../store/store";
+import { UPDATE_USERS, CHANGE_LOCATION } from "../store/actions";
 
 const Layout = () => {
   const [students, setStudents] = useState<TStudent[]>();
@@ -21,6 +23,7 @@ const Layout = () => {
 
   const handleChange = (event: any) => {
     setCurrentGroup(event.target.value);
+    store.dispatch(UPDATE_USERS(event.target.value));
   };
 
   useEffect(() => {
@@ -50,8 +53,31 @@ const Layout = () => {
   }, []);
 
   useEffect(() => {
+    store.subscribe(() => {
+      if (
+        (store.getState().data === "All students" &&
+          store.getState().prevLocation !== "/") ||
+        (store.getState().data === "All students" &&
+          history.location.pathname === "/")
+      ) {
+        fetch("http://localhost:9000/api/data", {
+          method: "GET",
+          cache: "reload",
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+            setStudents(data);
+          });
+      }
+    });
+  }, [currentGroup]);
+
+  useEffect(() => {
     if (currentGroup === "All students") {
-      setStudents(allStudents);
+      setAllStudents(allStudents);
     } else {
       fetch("http://localhost:9000/filterGroup", {
         method: "GET",
@@ -87,12 +113,26 @@ const Layout = () => {
           {history.location.pathname === "/" ? (
             <>
               <Link to="/addStudent">
-                <Button variant="info" size="sm" className="btn-separation">
+                <Button
+                  variant="info"
+                  size="sm"
+                  className="btn-separation"
+                  onClick={() => {
+                    store.dispatch(CHANGE_LOCATION(history.location.pathname));
+                  }}
+                >
                   Добавить студента
                 </Button>
               </Link>
               <Link to="/addExam">
-                <Button variant="info" size="sm" className="btn-separation">
+                <Button
+                  variant="info"
+                  size="sm"
+                  className="btn-separation"
+                  onClick={() =>
+                    store.dispatch(CHANGE_LOCATION(history.location.pathname))
+                  }
+                >
                   Добавить данные о сданном экзамене
                 </Button>
               </Link>
@@ -100,13 +140,28 @@ const Layout = () => {
           ) : (
             <>
               <Link to="/">
-                <Button variant="info" size="sm" className="btn-separation">
+                <Button
+                  variant="info"
+                  size="sm"
+                  className="btn-separation"
+                  onClick={() => {
+                    store.dispatch(CHANGE_LOCATION(history.location.pathname));
+                    store.dispatch(UPDATE_USERS("All students"));
+                  }}
+                >
                   На главную
                 </Button>
               </Link>
               {history.location.pathname !== "/addExam" ? (
                 <Link to="/addExam">
-                  <Button variant="info" size="sm" className="btn-separation">
+                  <Button
+                    variant="info"
+                    size="sm"
+                    className="btn-separation"
+                    onClick={() =>
+                      store.dispatch(CHANGE_LOCATION(history.location.pathname))
+                    }
+                  >
                     Добавить экзамен
                   </Button>
                 </Link>

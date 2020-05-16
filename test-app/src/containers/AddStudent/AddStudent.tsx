@@ -1,15 +1,20 @@
 import React, { Component, Fragment } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
-import { IAddStudentState } from "./AddStudent.type";
+import { IAddStudentState, IAddStudentProps } from "./AddStudent.type";
 import "./AddStudent.style.css";
 
 import { setAllBachelorGroups } from "../../utils/setAllBachelorGroups";
 import { isRussianLanguage } from "../../utils/addStudentValidations";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
-class AddStudent extends Component<{}, IAddStudentState> {
+import store from "../../store/store";
+import { UPDATE_USERS, CHANGE_LOCATION } from "../../store/actions";
+
+class AddStudent extends Component<IAddStudentProps, IAddStudentState> {
   constructor(props: any) {
     super(props);
+
+    //let history = useHistory();
 
     this.state = {
       groupNumbers: [],
@@ -23,13 +28,13 @@ class AddStudent extends Component<{}, IAddStudentState> {
       numberOfStudentTicket: { value: "", error: "" },
       groupNumber: { value: "Все группы", error: "" },
       isAHeadOfGroup: { value: "", error: "" },
+      ableToRedirect: false,
     };
 
     this.sendStudentData = this.sendStudentData.bind(this);
   }
 
   sendStudentData = () => {
-    console.log(this.state);
     fetch("http://localhost:9000/api/addStudent", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
@@ -40,12 +45,10 @@ class AddStudent extends Component<{}, IAddStudentState> {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
-        // window.location.href = "http://localhost:3000/";
+        store.dispatch(UPDATE_USERS("All students"));
+        store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
       });
   };
-
-  componentDidUpdate() {}
 
   componentDidMount() {
     fetch("http://localhost:9000/groupNumbers", {
@@ -277,13 +280,14 @@ class AddStudent extends Component<{}, IAddStudentState> {
   }
 }
 
-const AddStudentWrap = () => {
+const AddStudentWrap = (props: any) => {
+  const { location } = props;
   return (
     <>
       <h2 className="form-header">Введите данные о студенте</h2>
-      <AddStudent />
+      <AddStudent history={location} />
     </>
   );
 };
 
-export default AddStudentWrap;
+export default withRouter(AddStudentWrap);

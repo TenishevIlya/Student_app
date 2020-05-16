@@ -146,9 +146,21 @@ app.post("/api/addStudent", (req, res) => {
       `INSERT INTO student(Surname,Name,Patronymic,Direction_code,Group_number,Gender,Date_of_birth,Number_of_student_ticket, Date_of_issue_of_student_ticket,Is_a_head_of_group)
       VALUES ("${req.body.surname.value}","${req.body.name.value}","${req.body.patronymic.value}","${req.body.directionCode.value}","${streamGroupNumber}","${req.body.gender.value}","${req.body.dateOfBirth.value}","${req.body.numberOfStudentTicket.value}","${req.body.dateOfIssueOfStudentTicket.value}","${req.body.isAHeadOfGroup.value}")`
     )
-    .then((results) => {
-      res.status(201);
-    });
+    .then(
+      connection.query(
+        "SELECT * FROM student ORDER BY Date_of_issue_of_student_ticket DESC,student.Group_number,Surname",
+        (err, results, fields) => {
+          console.log(results);
+          // console.log(fields);
+          res.status(201).json(results);
+        }
+      )
+    );
+  // .then((error, results, fields) => {
+  //   // console.log(fields);
+  //   // console.log(results[0]);
+  //   res.status(201).json(results[0]);
+  // });
 });
 
 app.post("/api/addExam", (req, res) => {

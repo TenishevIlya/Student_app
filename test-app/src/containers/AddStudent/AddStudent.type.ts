@@ -10,6 +10,11 @@ export interface IAddStudentState {
   numberOfStudentTicket: TFormField;
   groupNumber: TFormField;
   isAHeadOfGroup: TFormField;
+  ableToRedirect: boolean;
+}
+
+export interface IAddStudentProps {
+  history?: any;
 }
 
 export type TGroupNumber = {
