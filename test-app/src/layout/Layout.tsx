@@ -5,6 +5,7 @@ import Students from "../containers/Students/Students";
 import AddStudent from "../containers/AddStudent/AddStudent";
 import AddExamWrap from "../containers/AddExam/AddExam";
 import EditStudent from "../containers/EditStudent/EditStudent";
+import ExamsResults from "../containers/ExamsResults/ExamsResults";
 import { Switch, Route, Link, useHistory } from "react-router-dom";
 
 import { TStudent } from "../containers/Students/Students.type";
@@ -195,6 +196,7 @@ const Layout = () => {
           <Route path="/addStudent" component={AddStudent} />
           <Route path="/addExam" component={AddExamWrap} />
           <Route path="/editStudent" component={EditStudent} />
+          <Route path="/examsResults" component={ExamsResults} />
         </Switch>
       </>
     </div>

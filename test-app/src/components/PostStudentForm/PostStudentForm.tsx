@@ -44,7 +44,7 @@ class PostStudentForm extends Component<
           error: "",
         },
         dateOfBirth: {
-          value: store.getState().currentUser.dateOfBirth,
+          value: backFormateDate(store.getState().currentUser.dateOfBirth),
           error: "",
         },
         gender: store.getState().currentUser.gender,
@@ -53,7 +53,9 @@ class PostStudentForm extends Component<
           error: "",
         },
         dateOfIssueOfStudentTicket: {
-          value: store.getState().currentUser.dateOfIssueOfStudentTicket,
+          value: backFormateDate(
+            store.getState().currentUser.dateOfIssueOfStudentTicket
+          ),
           error: "",
         },
         numberOfStudentTicket: {
@@ -74,9 +76,11 @@ class PostStudentForm extends Component<
 
   sendStudentData = () => {
     const url = `http://localhost:9000/api${this.props.history.pathname}`;
+    const currentMethod =
+      this.props.history.pathname === "/editStudent" ? "PUT" : "POST";
     fetch(url, {
       headers: { "Content-Type": "application/json" },
-      method: "POST",
+      method: currentMethod,
       body: JSON.stringify(this.state),
       cache: "reload",
     })
@@ -328,13 +332,22 @@ class PostStudentForm extends Component<
                       groupNumber: { value: event.target.value },
                     })
                   }
-                  defaultValue={
-                    this.props.history.pathname === "/editStudent"
-                      ? `${store.getState().currentUser.groupNumber}`
-                      : ""
-                  }
                 >
                   {this.state.groupNumbers?.map((group, index) => {
+                    if (
+                      this.props.history.pathname === "/editStudent" &&
+                      group === store.getState().currentUser.groupNumber
+                    ) {
+                      return (
+                        <option
+                          key={`${group}$#!@!`}
+                          value={`${group}`}
+                          selected
+                        >
+                          {group}
+                        </option>
+                      );
+                    }
                     if (index === 0) {
                       return (
                         <option key={`${group}$#!@!`} value={`${group}`}>

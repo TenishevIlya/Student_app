@@ -34,16 +34,18 @@ class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
         <td>{this.props.dateOfIssueOfStudentTicket}</td>
         <td>{this.props.isAHeadOfGroup}</td>
         <td>
-          <DropdownButton id="dropdown-basic-button" title="Выберите" size="sm">
+          <DropdownButton
+            id="dropdown-basic-button"
+            title="Выберите"
+            size="sm"
+            onClick={() => store.dispatch(CURRENT_USER(currentUserInfo))}
+          >
             <Dropdown.Item>
-              <Link
-                to="/editStudent"
-                onClick={() => store.dispatch(CURRENT_USER(currentUserInfo))}
-              >
-                Редактировать
-              </Link>
+              <Link to="/editStudent">Редактировать</Link>
             </Dropdown.Item>
-            <Dropdown.Item>Экзамены</Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="/examsResults">Экзамены</Link>
+            </Dropdown.Item>
             <Dropdown.Item>Удалить</Dropdown.Item>
           </DropdownButton>
         </td>

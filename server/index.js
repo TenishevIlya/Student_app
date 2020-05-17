@@ -136,10 +136,11 @@ app.get("/getDirectionsCodes", (req, res) => {
 
 app.post("/api/addStudent", (req, res) => {
   const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
+  console.log(req.body);
   connection
     .query(
       `INSERT INTO student(Surname,Name,Patronymic,Direction_code,Group_number,Gender,Date_of_birth,Number_of_student_ticket, Date_of_issue_of_student_ticket,Is_a_head_of_group)
-      VALUES ("${req.body.surname.value}","${req.body.name.value}","${req.body.patronymic.value}","${req.body.directionCode.value}","${streamGroupNumber}","${req.body.gender.value}","${req.body.dateOfBirth.value}","${req.body.numberOfStudentTicket.value}","${req.body.dateOfIssueOfStudentTicket.value}","${req.body.isAHeadOfGroup.value}")`
+      VALUES ("${req.body.surname.value}","${req.body.name.value}","${req.body.patronymic.value}","${req.body.directionCode.value}","${streamGroupNumber}","${req.body.gender}","${req.body.dateOfBirth.value}","${req.body.numberOfStudentTicket.value}","${req.body.dateOfIssueOfStudentTicket.value}","${req.body.isAHeadOfGroup}")`
     )
     .then(
       connection.query(
@@ -169,7 +170,7 @@ app.post("/api/addExam", (req, res) => {
     });
 });
 
-app.post("/api/editStudent", (req, res) => {
+app.put("/api/editStudent", (req, res) => {
   console.log(req.body);
   const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
   connection
@@ -177,7 +178,7 @@ app.post("/api/editStudent", (req, res) => {
       `UPDATE student SET Surname="${req.body.surname.value}", Name="${req.body.name.value}", Patronymic="${req.body.patronymic.value}", Direction_code="${req.body.directionCode.value}", Group_number="${streamGroupNumber}", Gender="${req.body.gender}", Date_of_birth="${req.body.dateOfBirth.value}", Number_of_student_ticket="${req.body.numberOfStudentTicket.value}", Date_of_issue_of_student_ticket="${req.body.dateOfIssueOfStudentTicket.value}", Is_a_head_of_group="${req.body.isAHeadOfGroup}" WHERE Id=${req.body.id}`
     )
     .then((results) => {
-      res.status(201);
+      res.status(201).json(results);
     });
 });
 
