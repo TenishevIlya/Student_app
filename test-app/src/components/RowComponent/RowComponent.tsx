@@ -1,12 +1,30 @@
 import React, { Component } from "react";
 import { IRowComponentProps, IRowComponentState } from "./RowComponent.type";
+import { Dropdown, DropdownButton } from "react-bootstrap";
+import "./RowComponent.style.css";
+import { Link } from "react-router-dom";
+import store from "../../store/store";
+import { CURRENT_USER } from "../../store/actions";
 
 class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
   render() {
+    const currentUserInfo = {
+      id: this.props.id,
+      groupNumber: this.props.numberOfGroup,
+      directionCode: this.props.directionCode,
+      surname: this.props.surname,
+      name: this.props.name,
+      patronymic: this.props.patronymic,
+      gender: this.props.gender,
+      dateOfBirth: this.props.dateOfBirth,
+      numberOfStudentTicket: this.props.numberOfStudentTicket,
+      dateOfIssueOfStudentTicket: this.props.dateOfIssueOfStudentTicket,
+      isAHeadOfGroup: this.props.isAHeadOfGroup,
+    };
     return (
       <tr>
         <td>{this.props.numberOfGroup}</td>
-        <td>{this.props.directionCode}</td>
+        <td>{this.props.directionName}</td>
         <td>{this.props.surname}</td>
         <td>{this.props.name}</td>
         <td>{this.props.patronymic}</td>
@@ -15,6 +33,20 @@ class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
         <td>{this.props.numberOfStudentTicket}</td>
         <td>{this.props.dateOfIssueOfStudentTicket}</td>
         <td>{this.props.isAHeadOfGroup}</td>
+        <td>
+          <DropdownButton id="dropdown-basic-button" title="Выберите" size="sm">
+            <Dropdown.Item>
+              <Link
+                to="/editStudent"
+                onClick={() => store.dispatch(CURRENT_USER(currentUserInfo))}
+              >
+                Редактировать
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>Экзамены</Dropdown.Item>
+            <Dropdown.Item>Удалить</Dropdown.Item>
+          </DropdownButton>
+        </td>
       </tr>
     );
   }

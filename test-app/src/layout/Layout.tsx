@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Students from "../containers/Students/Students";
-import AddStudentWrap from "../containers/AddStudent/AddStudent";
+import AddStudent from "../containers/AddStudent/AddStudent";
 import AddExamWrap from "../containers/AddExam/AddExam";
+import EditStudent from "../containers/EditStudent/EditStudent";
 import { Switch, Route, Link, useHistory } from "react-router-dom";
 
 import { TStudent } from "../containers/Students/Students.type";
@@ -12,7 +13,7 @@ import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
 
 import "./Layout.style.css";
 import store from "../store/store";
-import { UPDATE_USERS, CHANGE_LOCATION } from "../store/actions";
+import { CHANGE_GROUP, CHANGE_LOCATION, CURRENT_USER } from "../store/actions";
 
 const Layout = () => {
   const [students, setStudents] = useState<TStudent[]>();
@@ -23,7 +24,7 @@ const Layout = () => {
 
   const handleChange = (event: any) => {
     setCurrentGroup(event.target.value);
-    store.dispatch(UPDATE_USERS(event.target.value));
+    store.dispatch(CHANGE_GROUP(event.target.value));
   };
 
   useEffect(() => {
@@ -68,7 +69,6 @@ const Layout = () => {
             return res.json();
           })
           .then((data) => {
-            console.log(data);
             setStudents(data);
           });
       }
@@ -146,7 +146,7 @@ const Layout = () => {
                   className="btn-separation"
                   onClick={() => {
                     store.dispatch(CHANGE_LOCATION(history.location.pathname));
-                    store.dispatch(UPDATE_USERS("All students"));
+                    store.dispatch(CHANGE_GROUP("All students"));
                   }}
                 >
                   На главную
@@ -192,8 +192,9 @@ const Layout = () => {
           <Route exact path="/">
             <Students allStudents={students} />
           </Route>
-          <Route path="/addStudent" component={AddStudentWrap} />
+          <Route path="/addStudent" component={AddStudent} />
           <Route path="/addExam" component={AddExamWrap} />
+          <Route path="/editStudent" component={EditStudent} />
         </Switch>
       </>
     </div>

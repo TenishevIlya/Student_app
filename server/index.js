@@ -35,7 +35,6 @@ app.get("/api/yearChange", (req, res) => {
 });
 
 app.get("/api/data", (req, res) => {
-  console.log(req.body);
   connection.query(
     "SELECT * FROM student ORDER BY Date_of_issue_of_student_ticket DESC,student.Group_number,Surname",
     (err, results, fields) => {
@@ -46,7 +45,6 @@ app.get("/api/data", (req, res) => {
 });
 
 app.get("/filterGroup", (req, res) => {
-  console.log(req.headers.year);
   const group = req.headers.group;
   const year = req.headers.year;
   const course = req.headers.course;
@@ -100,7 +98,6 @@ app.get("/getJustGroupNumber", (req, res) => {
 
 app.get("/currentGroup:surnames", (req, res) => {
   if (req.headers.course === "4") {
-    console.log(req.headers.course);
     connection
       .query(
         `SELECT DISTINCT Surname, Direction_code FROM student JOIN number_of_course WHERE (student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education) OR (DATEDIFF(NOW(),student.Date_of_issue_of_student_ticket) >= 4*365 && student.Group_number = ${req.headers.group}) ORDER BY Surname`
@@ -125,7 +122,6 @@ app.get("/availableExams", (req, res) => {
       `SELECT DISTINCT subject.Name, subject.Id, subject.Number_of_course FROM subject JOIN number_of_course ON Course_number JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course <= ${req.headers.course} AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = number_of_course.Course_number ORDER BY subject.Name`
     )
     .then((results) => {
-      console.log(results);
       res.status(200).json(results[0]);
     });
 });
@@ -134,7 +130,6 @@ app.get("/getDirectionsCodes", (req, res) => {
   connection
     .query(`SELECT DISTINCT Direction_code, Group_number FROM student`)
     .then((results) => {
-      console.log(results);
       res.status(200).json(results[0]);
     });
 });
@@ -150,17 +145,10 @@ app.post("/api/addStudent", (req, res) => {
       connection.query(
         "SELECT * FROM student ORDER BY Date_of_issue_of_student_ticket DESC,student.Group_number,Surname",
         (err, results, fields) => {
-          console.log(results);
-          // console.log(fields);
           res.status(201).json(results);
         }
       )
     );
-  // .then((error, results, fields) => {
-  //   // console.log(fields);
-  //   // console.log(results[0]);
-  //   res.status(201).json(results[0]);
-  // });
 });
 
 app.post("/api/addExam", (req, res) => {
@@ -176,9 +164,20 @@ app.post("/api/addExam", (req, res) => {
           `INSERT INTO exam(Date,Subject_id,Student_id,Points,Mark) VALUES ("${req.body.date}","${req.body.subjectId}","${id}","${req.body.points}","${req.body.mark}")`
         )
         .then((results) => {
-          console.log(done);
           res.status(201);
         });
+    });
+});
+
+app.post("/api/editStudent", (req, res) => {
+  console.log(req.body);
+  const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
+  connection
+    .query(
+      `UPDATE student SET Surname="${req.body.surname.value}", Name="${req.body.name.value}", Patronymic="${req.body.patronymic.value}", Direction_code="${req.body.directionCode.value}", Group_number="${streamGroupNumber}", Gender="${req.body.gender}", Date_of_birth="${req.body.dateOfBirth.value}", Number_of_student_ticket="${req.body.numberOfStudentTicket.value}", Date_of_issue_of_student_ticket="${req.body.dateOfIssueOfStudentTicket.value}", Is_a_head_of_group="${req.body.isAHeadOfGroup}" WHERE Id=${req.body.id}`
+    )
+    .then((results) => {
+      res.status(201);
     });
 });
 

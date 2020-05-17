@@ -27,6 +27,7 @@ class Students extends Component<IStudentProps, IStudentState> {
               <th>Номер студенческого</th>
               <th>Дата выдачи студенческого</th>
               <th>Признак старосты</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody>
@@ -60,8 +61,10 @@ class Students extends Component<IStudentProps, IStudentState> {
                   return (
                     <RowComponent
                       key={student.Id}
+                      id={student.Id}
                       numberOfGroup={`${fullGroupNumber}`}
-                      directionCode={directionName}
+                      directionName={directionName}
+                      directionCode={student.Direction_code}
                       surname={student.Surname}
                       name={student.Name}
                       patronymic={student.Patronymic}

@@ -24,4 +24,13 @@ export const locationReducer = (state: string = "/", action: TAction) => {
   }
 };
 
+export const setCurrentUser = (state: any = "", action: TAction) => {
+  switch (action.type) {
+    case "CURRENT_USER":
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 //export default { dataReducer, groupReducer };
