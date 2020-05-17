@@ -12,9 +12,16 @@ export const CHANGE_LOCATION = (value: any) => {
   };
 };
 
-export const CURRENT_USER = (value: any) => {
+export const CURRENT_USER_INFO = (value: any) => {
   return {
-    type: "CURRENT_USER",
+    type: "CURRENT_USER_INFO",
+    payload: value,
+  };
+};
+
+export const CURRENT_EXAM_INFO = (value: any) => {
+  return {
+    type: "CURRENT_EXAM_INFO",
     payload: value,
   };
 };

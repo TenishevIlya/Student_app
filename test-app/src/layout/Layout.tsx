@@ -6,6 +6,7 @@ import AddStudent from "../containers/AddStudent/AddStudent";
 import AddExamWrap from "../containers/AddExam/AddExam";
 import EditStudent from "../containers/EditStudent/EditStudent";
 import ExamsResults from "../containers/ExamsResults/ExamsResults";
+import EditExam from "../containers/EditExam/EditExam";
 import { Switch, Route, Link, useHistory } from "react-router-dom";
 
 import { TStudent } from "../containers/Students/Students.type";
@@ -14,7 +15,11 @@ import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
 
 import "./Layout.style.css";
 import store from "../store/store";
-import { CHANGE_GROUP, CHANGE_LOCATION, CURRENT_USER } from "../store/actions";
+import {
+  CHANGE_GROUP,
+  CHANGE_LOCATION,
+  CURRENT_USER_INFO,
+} from "../store/actions";
 
 const Layout = () => {
   const [students, setStudents] = useState<TStudent[]>();
@@ -197,6 +202,7 @@ const Layout = () => {
           <Route path="/addExam" component={AddExamWrap} />
           <Route path="/editStudent" component={EditStudent} />
           <Route path="/examsResults" component={ExamsResults} />
+          <Route path="/editExam" component={EditExam} />
         </Switch>
       </>
     </div>

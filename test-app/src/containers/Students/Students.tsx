@@ -84,8 +84,4 @@ class Students extends Component<IStudentProps, IStudentState> {
   }
 }
 
-// const StudentsWrapper = (props: any) => {
-//   return <Students {...props} />;
-// };
-
 export default Students;

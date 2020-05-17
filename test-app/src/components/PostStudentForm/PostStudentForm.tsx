@@ -109,7 +109,6 @@ class PostStudentForm extends Component<
   }
 
   render() {
-    console.log(store.getState().currentUser);
     return (
       <Form>
         <Container>

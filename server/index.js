@@ -134,6 +134,16 @@ app.get("/getDirectionsCodes", (req, res) => {
     });
 });
 
+app.get("/getCurrentStudentExams", (req, res) => {
+  connection
+    .query(
+      `SELECT DISTINCT exam.Subject_id, exam.Student_id, exam.Date, exam.Points, exam.Mark, subject.Name FROM exam JOIN subject WHERE exam.Student_id=${req.headers.id} AND exam.Subject_id = subject.id ORDER BY exam.Date`
+    )
+    .then((results) => {
+      res.status(200).json(results[0]);
+    });
+});
+
 app.post("/api/addStudent", (req, res) => {
   const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
   console.log(req.body);
@@ -171,11 +181,20 @@ app.post("/api/addExam", (req, res) => {
 });
 
 app.put("/api/editStudent", (req, res) => {
-  console.log(req.body);
   const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
   connection
     .query(
       `UPDATE student SET Surname="${req.body.surname.value}", Name="${req.body.name.value}", Patronymic="${req.body.patronymic.value}", Direction_code="${req.body.directionCode.value}", Group_number="${streamGroupNumber}", Gender="${req.body.gender}", Date_of_birth="${req.body.dateOfBirth.value}", Number_of_student_ticket="${req.body.numberOfStudentTicket.value}", Date_of_issue_of_student_ticket="${req.body.dateOfIssueOfStudentTicket.value}", Is_a_head_of_group="${req.body.isAHeadOfGroup}" WHERE Id=${req.body.id}`
+    )
+    .then((results) => {
+      res.status(201).json(results);
+    });
+});
+
+app.put("/api/editExam", (req, res) => {
+  connection
+    .query(
+      `UPDATE exam SET Date="${req.body.date}", Points="${req.body.points}", Mark="${req.body.mark}" WHERE Subject_Id="${req.body.subjectId}"`
     )
     .then((results) => {
       res.status(201).json(results);

@@ -4,7 +4,7 @@ import { Dropdown, DropdownButton } from "react-bootstrap";
 import "./RowComponent.style.css";
 import { Link } from "react-router-dom";
 import store from "../../store/store";
-import { CURRENT_USER } from "../../store/actions";
+import { CURRENT_USER_INFO } from "../../store/actions";
 
 class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
   render() {
@@ -38,7 +38,7 @@ class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
             id="dropdown-basic-button"
             title="Выберите"
             size="sm"
-            onClick={() => store.dispatch(CURRENT_USER(currentUserInfo))}
+            onClick={() => store.dispatch(CURRENT_USER_INFO(currentUserInfo))}
           >
             <Dropdown.Item>
               <Link to="/editStudent">Редактировать</Link>
