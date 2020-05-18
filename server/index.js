@@ -220,4 +220,13 @@ app.delete("/api/deleteStudent", (req, res) => {
     });
 });
 
+app.delete("/api/deleteExamsForCurrentStudent", (req, res) => {
+  console.log(req.body.id);
+  connection
+    .query(`DELETE FROM exam WHERE Student_id="${req.body.id}"`)
+    .then((results) => {
+      res.status(200).json(results);
+    });
+});
+
 app.listen(9000);

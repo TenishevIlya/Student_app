@@ -33,6 +33,18 @@ const Delete = () => {
         return res.json();
       })
       .then((data) => {});
+    fetch("http://localhost:9000/api/deleteExamsForCurrentStudent", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      cache: "reload",
+      body: JSON.stringify({
+        id: store.getState().currentUser.id,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {});
     window.location.reload();
     setShow(false);
   };

@@ -5,7 +5,7 @@ export const validateExamDate = (
 ) => {
   const difference = Number(studentCourse) - Number(subjectCourse);
   const currentYear = new Date().getFullYear();
-  const startDate = new Date(`${currentYear - difference}-01-11`);
+  const startDate = new Date(`${currentYear - difference - 1}-12-15`);
   const endDate = new Date(`${currentYear - difference}-06-07`);
   if (new Date(date) <= endDate && new Date(date) >= startDate) {
     return "";
