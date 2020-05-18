@@ -1,23 +1,18 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import store from "../../store/store";
 import { Table } from "react-bootstrap";
 import ExamRowComponent from "../../components/ExamRowComponent/ExamRowComponent";
 import { IExamsResultsProps, IExamsResultsState } from "./ExamsResults.type";
+import { connect } from "react-redux";
 
 import { formatDate } from "../../utils/formatDate";
 import { calculateCourse } from "../../utils/calculateCourse";
 import { CURRENT_USER_INFO, CURRENT_STUDENT_EXAMS } from "../../store/actions";
 
-class ExamsResults extends Component<IExamsResultsProps, IExamsResultsState> {
-  constructor(props: any) {
-    super(props);
+const ExamsResults: React.FC<{}> = () => {
+  const [allExamsInfo, setAllExamsInfo] = useState([]);
 
-    this.state = {
-      allExamsInfo: [],
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     fetch("http://localhost:9000/getCurrentStudentExams", {
       method: "GET",
       headers: {
@@ -30,48 +25,52 @@ class ExamsResults extends Component<IExamsResultsProps, IExamsResultsState> {
       })
       .then((data) => {
         store.dispatch(CURRENT_STUDENT_EXAMS(data));
-        this.setState({ allExamsInfo: data });
+        setAllExamsInfo(data);
       });
-  }
+  });
 
-  render() {
-    return (
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Номер курса</th>
-            <th>Название предмета</th>
-            <th>Дата проведения экзамена</th>
-            <th>Количество баллов</th>
-            <th>Зачет/оценка</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          {store.getState().studentExams !== undefined
-            ? store.getState().studentExams.map((exam: any) => {
-                const course = calculateCourse(
-                  store.getState().currentUser.dateOfIssueOfStudentTicket,
-                  exam.Date
-                );
-                return (
-                  <ExamRowComponent
-                    key={`${exam.Date}${exam.Name}`}
-                    course={course}
-                    name={exam.Name}
-                    date={formatDate(exam.Date)}
-                    points={exam.Points}
-                    mark={exam.Mark}
-                    studentId={exam.Student_id}
-                    subjectId={exam.Subject_id}
-                  />
-                );
-              })
-            : null}
-        </tbody>
-      </Table>
-    );
-  }
-}
+  useEffect(() => {
+    store.subscribe(() => {
+      setAllExamsInfo(store.getState().studentExams);
+    });
+  });
+
+  return (
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>Номер курса</th>
+          <th>Название предмета</th>
+          <th>Дата проведения экзамена</th>
+          <th>Количество баллов</th>
+          <th>Зачет/оценка</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {allExamsInfo !== undefined
+          ? allExamsInfo.map((exam: any) => {
+              const course = calculateCourse(
+                store.getState().currentUser.dateOfIssueOfStudentTicket,
+                exam.Date
+              );
+              return (
+                <ExamRowComponent
+                  key={`${exam.Date}${exam.Name}`}
+                  course={course}
+                  name={exam.Name}
+                  date={formatDate(exam.Date)}
+                  points={exam.Points}
+                  mark={exam.Mark}
+                  studentId={exam.Student_id}
+                  subjectId={exam.Subject_id}
+                />
+              );
+            })
+          : null}
+      </tbody>
+    </Table>
+  );
+};
 
 export default ExamsResults;

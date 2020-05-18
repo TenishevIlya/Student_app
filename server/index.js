@@ -175,7 +175,7 @@ app.post("/api/addExam", (req, res) => {
           `INSERT INTO exam(Date,Subject_id,Student_id,Points,Mark) VALUES ("${req.body.date}","${req.body.subjectId}","${id}","${req.body.points}","${req.body.mark}")`
         )
         .then((results) => {
-          res.status(201);
+          res.status(201).json(results);
         });
     });
 });
@@ -202,8 +202,6 @@ app.put("/api/editExam", (req, res) => {
 });
 
 app.delete("/api/deleteExamInfo", (req, res) => {
-  console.log(req.body.deleteSubjectId);
-  console.log(req.body.deleteStudentId);
   connection
     .query(
       `DELETE FROM exam WHERE Subject_Id="${req.body.deleteSubjectId}" AND Student_Id="${req.body.deleteStudentId}"`

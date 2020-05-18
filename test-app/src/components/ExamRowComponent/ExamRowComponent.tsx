@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { IExamRowComponentProps } from "./ExamRowComponent.type";
 import { DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { CURRENT_EXAM_INFO } from "../../store/actions";
+import { CURRENT_EXAM_INFO, CURRENT_STUDENT_EXAMS } from "../../store/actions";
 import store from "../../store/store";
 
 const Delete = () => {
   const [show, setShow] = useState(false);
 
-  const handleClose = () => {
+  const deleteExam = () => {
     let deleteIndex = null;
 
     let dbSubjectDeleteIndex = 0;
@@ -24,6 +24,8 @@ const Delete = () => {
     });
     if (deleteIndex !== null) {
       beforeDeleteExams.splice(deleteIndex, 1);
+      store.dispatch(CURRENT_EXAM_INFO({}));
+      store.dispatch(CURRENT_STUDENT_EXAMS(beforeDeleteExams));
       fetch("http://localhost:9000/api/deleteExamInfo", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -40,6 +42,8 @@ const Delete = () => {
     }
     setShow(false);
   };
+
+  const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
@@ -52,10 +56,10 @@ const Delete = () => {
         </Modal.Header>
         <Modal.Body>Удалить информацию об этом экзамене?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={deleteExam}>
             Назад
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={deleteExam}>
             Удалить
           </Button>
         </Modal.Footer>

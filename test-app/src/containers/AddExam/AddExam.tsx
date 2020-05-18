@@ -101,7 +101,6 @@ class AddExam extends Component<{}, IAddExamState> {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         this.setState({ examNames: data });
         if (data.length !== 0) {
           this.setState({ subjectId: data[0].Id });
@@ -117,7 +116,6 @@ class AddExam extends Component<{}, IAddExamState> {
       points: this.state.points,
       mark: this.state.mark,
     };
-    console.log(infoAboutExam);
     let isAnyError = "";
     let pointEr = "";
     this.state.examNames.map((exam) => {
@@ -145,9 +143,7 @@ class AddExam extends Component<{}, IAddExamState> {
         .then((res) => {
           return res.json();
         })
-        .then((data) => {
-          console.log(data[0].Id);
-        });
+        .then((data) => {});
     }
   };
 
@@ -288,9 +284,9 @@ class AddExam extends Component<{}, IAddExamState> {
                 <Form.Control
                   type="text"
                   placeholder="Введите количество баллов"
-                  onChange={() => {
-                    console.log("ad");
-                  }}
+                  // onChange={() => {
+                  //   console.log("ad");
+                  // }}
                   onBlur={(event: any) =>
                     this.setState({
                       points: event.target.value,

@@ -1,4 +1,6 @@
-export interface IExamsResultsProps {}
+export interface IExamsResultsProps {
+  exams: TExamInfo[];
+}
 
 export interface IExamsResultsState {
   allExamsInfo: TExamInfo[];
