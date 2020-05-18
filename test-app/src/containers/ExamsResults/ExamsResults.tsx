@@ -6,7 +6,7 @@ import { IExamsResultsProps, IExamsResultsState } from "./ExamsResults.type";
 
 import { formatDate } from "../../utils/formatDate";
 import { calculateCourse } from "../../utils/calculateCourse";
-import { CURRENT_USER_INFO } from "../../store/actions";
+import { CURRENT_USER_INFO, CURRENT_STUDENT_EXAMS } from "../../store/actions";
 
 class ExamsResults extends Component<IExamsResultsProps, IExamsResultsState> {
   constructor(props: any) {
@@ -29,6 +29,7 @@ class ExamsResults extends Component<IExamsResultsProps, IExamsResultsState> {
         return res.json();
       })
       .then((data) => {
+        store.dispatch(CURRENT_STUDENT_EXAMS(data));
         this.setState({ allExamsInfo: data });
       });
   }
@@ -47,8 +48,8 @@ class ExamsResults extends Component<IExamsResultsProps, IExamsResultsState> {
           </tr>
         </thead>
         <tbody>
-          {this.state.allExamsInfo !== undefined
-            ? this.state.allExamsInfo.map((exam) => {
+          {store.getState().studentExams !== undefined
+            ? store.getState().studentExams.map((exam: any) => {
                 const course = calculateCourse(
                   store.getState().currentUser.dateOfIssueOfStudentTicket,
                   exam.Date

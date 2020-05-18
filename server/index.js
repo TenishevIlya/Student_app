@@ -201,4 +201,16 @@ app.put("/api/editExam", (req, res) => {
     });
 });
 
+app.delete("/api/deleteExamInfo", (req, res) => {
+  console.log(req.body.deleteSubjectId);
+  console.log(req.body.deleteStudentId);
+  connection
+    .query(
+      `DELETE FROM exam WHERE Subject_Id="${req.body.deleteSubjectId}" AND Student_Id="${req.body.deleteStudentId}"`
+    )
+    .then((results) => {
+      res.status(200).json(results);
+    });
+});
+
 app.listen(9000);

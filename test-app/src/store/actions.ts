@@ -25,3 +25,10 @@ export const CURRENT_EXAM_INFO = (value: any) => {
     payload: value,
   };
 };
+
+export const CURRENT_STUDENT_EXAMS = (value: any) => {
+  return {
+    type: "CURRENT_STUDENT_EXAMS",
+    payload: value,
+  };
+};

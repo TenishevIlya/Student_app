@@ -41,3 +41,12 @@ export const currentExamInfo = (state: any = {}, action: TAction) => {
       return state;
   }
 };
+
+export const currentStudentExams = (state: any = [], action: TAction) => {
+  switch (action.type) {
+    case "CURRENT_STUDENT_EXAMS":
+      return action.payload;
+    default:
+      return state;
+  }
+};

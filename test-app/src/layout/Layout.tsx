@@ -15,11 +15,7 @@ import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
 
 import "./Layout.style.css";
 import store from "../store/store";
-import {
-  CHANGE_GROUP,
-  CHANGE_LOCATION,
-  CURRENT_USER_INFO,
-} from "../store/actions";
+import { CHANGE_GROUP, CHANGE_LOCATION } from "../store/actions";
 
 const Layout = () => {
   const [students, setStudents] = useState<TStudent[]>();

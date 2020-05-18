@@ -4,6 +4,7 @@ import {
   locationReducer,
   setCurrentUser,
   currentExamInfo,
+  currentStudentExams,
 } from "./reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 
@@ -12,6 +13,7 @@ const reducer = combineReducers({
   prevLocation: locationReducer,
   currentUser: setCurrentUser,
   currentExam: currentExamInfo,
+  studentExams: currentStudentExams,
 });
 
 const store = createStore(reducer, composeWithDevTools());
