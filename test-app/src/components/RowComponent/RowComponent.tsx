@@ -1,10 +1,66 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { IRowComponentProps, IRowComponentState } from "./RowComponent.type";
-import { Dropdown, DropdownButton } from "react-bootstrap";
+import { Dropdown, DropdownButton, Modal, Button } from "react-bootstrap";
 import "./RowComponent.style.css";
 import { Link } from "react-router-dom";
 import store from "../../store/store";
-import { CURRENT_USER_INFO } from "../../store/actions";
+import {
+  CURRENT_USER_INFO,
+  CHANGE_GROUP,
+  ALL_STUDENTS,
+} from "../../store/actions";
+
+const Delete = () => {
+  const [show, setShow] = useState(false);
+
+  const deleteExam = () => {
+    let deleteIndex = null;
+
+    let dbSubjectDeleteIndex = 0;
+    let dbStudentDeleteIndex = 0;
+
+    store.dispatch(CHANGE_GROUP("All students"));
+    console.log(store.getState().currentUser.id);
+    fetch("http://localhost:9000/api/deleteStudent", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      cache: "reload",
+      body: JSON.stringify({
+        id: store.getState().currentUser.id,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {});
+    window.location.reload();
+    setShow(false);
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Dropdown.Item onClick={handleShow}>Удалить</Dropdown.Item>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Удаление данных о студенте?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Удалить информацию об этом студенте?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={deleteExam}>
+            Назад
+          </Button>
+          <Button variant="primary" onClick={deleteExam}>
+            Удалить
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
 
 class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
   render() {
@@ -46,7 +102,8 @@ class RowComponent extends Component<IRowComponentProps, IRowComponentState> {
             <Dropdown.Item>
               <Link to="/examsResults">Экзамены</Link>
             </Dropdown.Item>
-            <Dropdown.Item>Удалить</Dropdown.Item>
+            <Delete />
+            {/* <Dropdown.Item>Удалить</Dropdown.Item> */}
           </DropdownButton>
         </td>
       </tr>

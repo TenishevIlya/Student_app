@@ -15,7 +15,7 @@ import { setAllBachelorGroups } from "../utils/setAllBachelorGroups";
 
 import "./Layout.style.css";
 import store from "../store/store";
-import { CHANGE_GROUP, CHANGE_LOCATION } from "../store/actions";
+import { CHANGE_GROUP, CHANGE_LOCATION, ALL_STUDENTS } from "../store/actions";
 
 const Layout = () => {
   const [students, setStudents] = useState<TStudent[]>();
@@ -40,6 +40,7 @@ const Layout = () => {
       .then((data) => {
         setStudents(data);
         setAllStudents(data);
+        //store.dispatch(ALL_STUDENTS(data));
       });
     fetch("http://localhost:9000/groupNumbers", {
       method: "GET",
@@ -71,6 +72,7 @@ const Layout = () => {
             return res.json();
           })
           .then((data) => {
+            console.log(data);
             setStudents(data);
           });
       }

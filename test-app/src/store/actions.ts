@@ -19,6 +19,13 @@ export const CURRENT_USER_INFO = (value: any) => {
   };
 };
 
+export const ALL_STUDENTS = (value: any) => {
+  return {
+    type: "ALL_STUDENTS",
+    payload: value,
+  };
+};
+
 export const CURRENT_EXAM_INFO = (value: any) => {
   return {
     type: "CURRENT_EXAM_INFO",

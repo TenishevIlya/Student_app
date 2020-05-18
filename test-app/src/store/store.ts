@@ -5,10 +5,12 @@ import {
   setCurrentUser,
   currentExamInfo,
   currentStudentExams,
+  allStudents,
 } from "./reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 const reducer = combineReducers({
+  students: allStudents,
   data: dataReducer,
   prevLocation: locationReducer,
   currentUser: setCurrentUser,

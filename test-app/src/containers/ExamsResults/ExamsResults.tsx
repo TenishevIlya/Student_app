@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 
 import { formatDate } from "../../utils/formatDate";
 import { calculateCourse } from "../../utils/calculateCourse";
-import { CURRENT_USER_INFO, CURRENT_STUDENT_EXAMS } from "../../store/actions";
+import { CURRENT_STUDENT_EXAMS } from "../../store/actions";
 
 const ExamsResults: React.FC<{}> = () => {
   const [allExamsInfo, setAllExamsInfo] = useState([]);

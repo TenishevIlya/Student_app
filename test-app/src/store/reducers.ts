@@ -50,3 +50,12 @@ export const currentStudentExams = (state: any = [], action: TAction) => {
       return state;
   }
 };
+
+export const allStudents = (state: any = [], action: TAction) => {
+  switch (action.type) {
+    case "ALL_STUDENTS":
+      return action.payload;
+    default:
+      return state;
+  }
+};

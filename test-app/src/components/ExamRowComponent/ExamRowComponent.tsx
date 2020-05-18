@@ -56,7 +56,7 @@ const Delete = () => {
         </Modal.Header>
         <Modal.Body>Удалить информацию об этом экзамене?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={deleteExam}>
+          <Button variant="secondary" onClick={handleClose}>
             Назад
           </Button>
           <Button variant="primary" onClick={deleteExam}>
