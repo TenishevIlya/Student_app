@@ -10,7 +10,7 @@ export const validateExamDate = (
   if (new Date(date) <= endDate && new Date(date) >= startDate) {
     return "";
   } else {
-    return `Дата экзамена должна находиться в диапазоне между ${startDate.getDate()}.0${
+    return `Дата экзамена должна находиться в диапазоне между ${startDate.getDate()}.${
       startDate.getMonth() + 1
     }.${startDate.getFullYear()} and ${endDate.getDate()}.0${
       endDate.getMonth() + 2

@@ -1,7 +1,7 @@
 export interface IRowComponentProps {
   id: number;
   numberOfGroup: string;
-  directionName: string | undefined;
+  directionName: any;
   directionCode: string | undefined;
   surname: string;
   name: string;

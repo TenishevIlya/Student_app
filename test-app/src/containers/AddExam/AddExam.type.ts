@@ -18,6 +18,8 @@ export interface IAddExamState {
   error: string;
   success: boolean;
   pointsError: string;
+  examsCourseList: any;
+  examsCourse: any;
 }
 
 export type TCourse = {

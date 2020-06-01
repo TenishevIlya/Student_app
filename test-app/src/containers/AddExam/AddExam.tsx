@@ -29,6 +29,8 @@ class AddExam extends Component<{}, IAddExamState> {
       error: "",
       success: false,
       pointsError: "",
+      examsCourseList: [1],
+      examsCourse: 1,
     };
 
     this.getForwardFormFields = this.getForwardFormFields.bind(this);
@@ -95,6 +97,7 @@ class AddExam extends Component<{}, IAddExamState> {
         course: `${this.state.currentCourse}`,
         group: `${this.state.currentGroup}`,
         directionCode: `${this.state.currentGroupDirectionCode}`,
+        examsCourse: `${this.state.examsCourse}`,
       },
     })
       .then((res) => {
@@ -157,11 +160,18 @@ class AddExam extends Component<{}, IAddExamState> {
             <Form.Control
               as="select"
               custom
-              onChange={(event: any) =>
+              onChange={(event: any) => {
                 this.setState({
                   currentCourse: event.target.value,
-                })
-              }
+                });
+                let examsCourseArray = [];
+                for (let i = 1; i <= event.target.value; i++) {
+                  examsCourseArray.push(i);
+                }
+                this.setState({
+                  examsCourseList: examsCourseArray,
+                });
+              }}
             >
               {this.state.allCourses?.map((course) => {
                 return (
@@ -202,6 +212,26 @@ class AddExam extends Component<{}, IAddExamState> {
                     value={`${group.Group_number}`}
                   >
                     {`${group.Group_number}`}
+                  </option>
+                );
+              })}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="formGroupNumbers">
+            <Form.Label>Номер курса для экзаменов</Form.Label>
+            <Form.Control
+              as="select"
+              custom
+              onChange={(event: any) => {
+                this.setState({
+                  examsCourse: event.target.value,
+                });
+              }}
+            >
+              {this.state.examsCourseList?.map((course: any) => {
+                return (
+                  <option key={`${course}$#!@!`} value={`${course}`}>
+                    {`${course}`}
                   </option>
                 );
               })}

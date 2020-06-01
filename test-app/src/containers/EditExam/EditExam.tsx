@@ -55,6 +55,7 @@ class EditExam extends Component<IEditExamProps, IEditExamState> {
                       this.setState({ name: event.target.value });
                     }}
                     defaultValue={store.getState().currentExam.name}
+                    disabled
                   ></Form.Control>
                 </Form.Group>
               </Col>

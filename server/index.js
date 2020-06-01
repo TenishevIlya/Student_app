@@ -4,6 +4,8 @@ const mysqlRoute = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+const fs = require("fs");
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -27,12 +29,25 @@ connection.query(
   }
 );
 
-app.get("/api/yearChange", (req, res) => {
-  connection.query(
-    "UPDATE number_of_course SET Beginning_of_education=CONCAT(YEAR(Beginning_of_education)+1,'09', '01') WHERE Course_number=1 OR Course_number=2 OR Course_number=30 OR Course_number=4"
-  );
-  res.status(201);
+app.get("/download", (req, res) => {
+  // console.log("get");
+  // fs.open("testFile.txt", "w", (err) => {
+  //   if (err) throw err;
+  //   console.log("File created");
+  // });
+  // fs.appendFile("testFile.txt", " This line is beyond the end.", (err) => {
+  //   if (err) throw err;
+  //   console.log("Data has been added!");
+  // });
+  res.sendFile(__dirname + "/testFile.txt");
 });
+
+// app.get("/api/yearChange", (req, res) => {
+//   connection.query(
+//     "UPDATE number_of_course SET Beginning_of_education=CONCAT(YEAR(Beginning_of_education)+1,'09', '01') WHERE Course_number=1 OR Course_number=2 OR Course_number=30 OR Course_number=4"
+//   );
+//   res.status(201);
+// });
 
 app.get("/api/data", (req, res) => {
   connection.query(
@@ -61,21 +76,16 @@ app.get("/filterGroup", (req, res) => {
 });
 
 app.get("/groupNumbers", (req, res) => {
-  connection
-    .query("SELECT Group_number FROM student GROUP BY Group_number")
-    .then((results) => {
-      res.status(200).json(results[0]);
-    });
+  connection.query("SELECT Group_number FROM 	group_numbers").then((results) => {
+    res.status(200).json(results[0]);
+  });
 });
 
-app.get("/getGraduated", (req, res) => {
-  connection
-    .query(
-      `SELECT * FROM student  WHERE DATEDIFF(NOW(),student.Date_of_issue_of_student_ticket) >= 4*365 ORDER BY student.Group_number,Surname`
-    )
-    .then((results) => {
-      res.status(200).json(results[0]);
-    });
+app.get("/getDirectionName", (req, res) => {
+  connection.query(`SELECT * FROM directions`, (err, results) => {
+    console.log(results);
+    res.status(200).json(results);
+  });
 });
 
 app.get("/getJustCourse", (req, res) => {
@@ -117,9 +127,10 @@ app.get("/currentGroup:surnames", (req, res) => {
 });
 
 app.get("/availableExams", (req, res) => {
+  console.log(req.headers);
   connection
     .query(
-      `SELECT DISTINCT subject.Name, subject.Id, subject.Number_of_course FROM subject JOIN number_of_course ON Course_number JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course <= ${req.headers.course} AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = number_of_course.Course_number ORDER BY subject.Name`
+      `SELECT DISTINCT subject.Name, subject.Id FROM subject JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course = "${req.headers.examscourse}" AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = "${req.headers.examscourse}" ORDER BY subject.Name`
     )
     .then((results) => {
       res.status(200).json(results[0]);
@@ -137,7 +148,7 @@ app.get("/getDirectionsCodes", (req, res) => {
 app.get("/getCurrentStudentExams", (req, res) => {
   connection
     .query(
-      `SELECT DISTINCT exam.Subject_id, exam.Student_id, exam.Date, exam.Points, exam.Mark, subject.Name FROM exam JOIN subject WHERE exam.Student_id=${req.headers.id} AND exam.Subject_id = subject.id ORDER BY exam.Date`
+      `SELECT DISTINCT exam.Subject_id, exam.Student_id, exam.Date, exam.Points, exam.Mark, subject.Name, subject.Number_of_course FROM exam JOIN subject WHERE exam.Student_id=${req.headers.id} AND exam.Subject_id = subject.id ORDER BY exam.Date`
     )
     .then((results) => {
       res.status(200).json(results[0]);
@@ -160,6 +171,25 @@ app.post("/api/addStudent", (req, res) => {
         }
       )
     );
+});
+
+app.post("/api/addGroup", (req, res) => {
+  connection.query(
+    `INSERT INTO group_numbers VALUES("${req.body.groupNumber}")`,
+    (err, results) => {
+      res.status(201).json(results);
+    }
+  );
+});
+
+app.post("/api/addDirection", (req, res) => {
+  console.log(req.body);
+  connection.query(
+    `INSERT INTO directions(Name, Code_of_direction) VALUES("${req.body.directionName}","${req.body.directionCode}")`,
+    (err, results) => {
+      res.status(201).json(results);
+    }
+  );
 });
 
 app.post("/api/addExam", (req, res) => {
@@ -212,7 +242,6 @@ app.delete("/api/deleteExamInfo", (req, res) => {
 });
 
 app.delete("/api/deleteStudent", (req, res) => {
-  console.log(req.body.id);
   connection
     .query(`DELETE FROM student WHERE Id="${req.body.id}"`)
     .then((results) => {
@@ -221,7 +250,6 @@ app.delete("/api/deleteStudent", (req, res) => {
 });
 
 app.delete("/api/deleteExamsForCurrentStudent", (req, res) => {
-  console.log(req.body.id);
   connection
     .query(`DELETE FROM exam WHERE Student_id="${req.body.id}"`)
     .then((results) => {

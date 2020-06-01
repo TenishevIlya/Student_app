@@ -9,6 +9,24 @@ import { formatDate } from "../../utils/formatDate";
 class Students extends Component<IStudentProps, IStudentState> {
   constructor(props: any) {
     super(props);
+
+    this.state = {
+      directions: [],
+    };
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:9000/getDirectionName", {
+      method: "GET",
+      cache: "reload",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ directions: data });
+        console.log(data);
+      });
   }
 
   render() {
@@ -34,7 +52,8 @@ class Students extends Component<IStudentProps, IStudentState> {
             {this.props.allStudents !== undefined
               ? this.props.allStudents.map((student: TStudent) => {
                   const directionName = setDirectionName(
-                    student.Direction_code
+                    student.Direction_code,
+                    this.state.directions
                   );
                   const ticketIssueDate = formatDate(
                     student.Date_of_issue_of_student_ticket

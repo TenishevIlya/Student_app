@@ -1,7 +1,14 @@
 export interface IStudentProps {
   allStudents: TStudent[] | undefined;
 }
-export interface IStudentState {}
+export interface IStudentState {
+  directions: TDirection[];
+}
+
+export type TDirection = {
+  Name: string;
+  Code_of_direction: string;
+};
 
 export type TStudent = {
   Date_of_birth: string;

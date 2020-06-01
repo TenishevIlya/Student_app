@@ -7,6 +7,8 @@ import AddExamWrap from "../containers/AddExam/AddExam";
 import EditStudent from "../containers/EditStudent/EditStudent";
 import ExamsResults from "../containers/ExamsResults/ExamsResults";
 import EditExam from "../containers/EditExam/EditExam";
+import GetReports from "../containers/GetReports/GetReports";
+import AddGroupAndDirection from "../containers/AddGroupAndDirection/AddGroupAndDirection";
 import { Switch, Route, Link, useHistory } from "react-router-dom";
 
 import { TStudent } from "../containers/Students/Students.type";
@@ -140,6 +142,18 @@ const Layout = () => {
                   Добавить данные о сданном экзамене
                 </Button>
               </Link>
+              <Link to="/getReports">
+                <Button
+                  variant="info"
+                  size="sm"
+                  className="btn-separation"
+                  onClick={() =>
+                    store.dispatch(CHANGE_LOCATION(history.location.pathname))
+                  }
+                >
+                  Выгрузка отчетов
+                </Button>
+              </Link>
             </>
           ) : (
             <>
@@ -201,6 +215,11 @@ const Layout = () => {
           <Route path="/editStudent" component={EditStudent} />
           <Route path="/examsResults" component={ExamsResults} />
           <Route path="/editExam" component={EditExam} />
+          <Route path="/getReports" component={GetReports} />
+          <Route
+            path="/addGroupAndDirection"
+            component={AddGroupAndDirection}
+          />
         </Switch>
       </>
     </div>

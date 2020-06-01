@@ -448,6 +448,10 @@ class PostStudentForm extends Component<
               {this.props.submitBtnTitle}
             </Button>
           </Link>
+          <Link to="/addGroupAndDirection">
+            Не нашли подходящей группы в списке? Вы можете добавить информацию о
+            ней!
+          </Link>
         </Container>
       </Form>
     );

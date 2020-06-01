@@ -6,7 +6,6 @@ import { IExamsResultsProps, IExamsResultsState } from "./ExamsResults.type";
 import { connect } from "react-redux";
 
 import { formatDate } from "../../utils/formatDate";
-import { calculateCourse } from "../../utils/calculateCourse";
 import { CURRENT_STUDENT_EXAMS } from "../../store/actions";
 
 const ExamsResults: React.FC<{}> = () => {
@@ -50,14 +49,10 @@ const ExamsResults: React.FC<{}> = () => {
       <tbody>
         {allExamsInfo !== undefined
           ? allExamsInfo.map((exam: any) => {
-              const course = calculateCourse(
-                store.getState().currentUser.dateOfIssueOfStudentTicket,
-                exam.Date
-              );
               return (
                 <ExamRowComponent
                   key={`${exam.Date}${exam.Name}`}
-                  course={course}
+                  course={exam.Number_of_course}
                   name={exam.Name}
                   date={formatDate(exam.Date)}
                   points={exam.Points}
