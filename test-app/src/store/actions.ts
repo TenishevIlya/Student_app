@@ -39,3 +39,10 @@ export const CURRENT_STUDENT_EXAMS = (value: any) => {
     payload: value,
   };
 };
+
+export const IS_A_HEAD_OF_GROUP = (value: any) => {
+  return {
+    type: "IS_A_HEAD_OF_GROUP",
+    payload: value,
+  };
+};

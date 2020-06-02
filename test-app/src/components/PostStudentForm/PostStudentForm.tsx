@@ -4,7 +4,11 @@ import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { setAllBachelorGroups } from "../../utils/setAllBachelorGroups";
 import { backFormateDate } from "../../utils/formatDate";
 import store from "../../store/store";
-import { CHANGE_GROUP, CHANGE_LOCATION } from "../../store/actions";
+import {
+  CHANGE_GROUP,
+  CHANGE_LOCATION,
+  IS_A_HEAD_OF_GROUP,
+} from "../../store/actions";
 import {
   IPostStudentFormProps,
   IPostStudentFormState,
@@ -32,6 +36,7 @@ class PostStudentForm extends Component<
         groupNumber: { value: "101", error: "" },
         isAHeadOfGroup: null,
         ableToRedirect: false,
+        checkHeadOfGroup: "",
       };
     } else {
       this.state = {
@@ -68,6 +73,7 @@ class PostStudentForm extends Component<
         },
         isAHeadOfGroup: store.getState().currentUser.isAHeadOfGroup,
         ableToRedirect: false,
+        checkHeadOfGroup: "",
       };
     }
 
@@ -106,9 +112,27 @@ class PostStudentForm extends Component<
         setAllBachelorGroups(data, groups);
         this.setState({ groupNumbers: groups.sort() });
       });
+
+    fetch("http://localhost:9000/checkHeadOfGroup", {
+      method: "GET",
+      headers: {
+        issueDate: this.state.dateOfIssueOfStudentTicket.value,
+        group: this.state.groupNumber.value,
+      },
+      cache: "reload",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        store.dispatch(IS_A_HEAD_OF_GROUP(data[0].HeadOfGroup));
+      });
   }
 
   render() {
+    store.subscribe(() => {
+      this.setState({ checkHeadOfGroup: store.getState().checkHeadOfGroup });
+    });
     return (
       <Form>
         <Container>
@@ -381,6 +405,12 @@ class PostStudentForm extends Component<
                       name="headOfGroup"
                       value={1}
                       checked
+                      disabled={
+                        this.state.checkHeadOfGroup === "1" &&
+                        this.state.isAHeadOfGroup !== 1
+                          ? true
+                          : false
+                      }
                       id={`custom-inline-headOfGroup-1`}
                       onClick={(event: any) =>
                         this.setState({
@@ -396,6 +426,12 @@ class PostStudentForm extends Component<
                       type={"radio"}
                       name="headOfGroup"
                       value={1}
+                      disabled={
+                        this.state.checkHeadOfGroup === "1" &&
+                        this.state.isAHeadOfGroup === 0
+                          ? true
+                          : false
+                      }
                       id={`custom-inline-headOfGroup-1`}
                       onClick={(event: any) =>
                         this.setState({
@@ -415,6 +451,12 @@ class PostStudentForm extends Component<
                       type={"radio"}
                       name="headOfGroup"
                       value={0}
+                      disabled={
+                        this.state.checkHeadOfGroup === "1" &&
+                        this.state.isAHeadOfGroup === 0
+                          ? true
+                          : false
+                      }
                       checked
                       id={`custom-inline-headOfGroup-2`}
                       onClick={(event: any) =>
@@ -431,6 +473,12 @@ class PostStudentForm extends Component<
                       type={"radio"}
                       name="headOfGroup"
                       value={0}
+                      disabled={
+                        this.state.checkHeadOfGroup === "1" &&
+                        this.state.isAHeadOfGroup === 0
+                          ? true
+                          : false
+                      }
                       id={`custom-inline-headOfGroup-2`}
                       onClick={(event: any) =>
                         this.setState({
@@ -448,10 +496,12 @@ class PostStudentForm extends Component<
               {this.props.submitBtnTitle}
             </Button>
           </Link>
-          <Link to="/addGroupAndDirection">
-            Не нашли подходящей группы в списке? Вы можете добавить информацию о
-            ней!
-          </Link>
+          {this.props.history.pathname === "/addStudent" ? (
+            <Link to="/addGroupAndDirection">
+              Не нашли подходящей группы в списке? Вы можете добавить информацию
+              о ней!
+            </Link>
+          ) : null}
         </Container>
       </Form>
     );

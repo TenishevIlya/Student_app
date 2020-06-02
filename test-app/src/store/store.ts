@@ -6,6 +6,7 @@ import {
   currentExamInfo,
   currentStudentExams,
   allStudents,
+  isAHeadOfGroup,
 } from "./reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   currentUser: setCurrentUser,
   currentExam: currentExamInfo,
   studentExams: currentStudentExams,
+  checkHeadOfGroup: isAHeadOfGroup,
 });
 
 const store = createStore(reducer, composeWithDevTools());

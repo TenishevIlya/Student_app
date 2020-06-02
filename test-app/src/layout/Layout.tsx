@@ -68,13 +68,12 @@ const Layout = () => {
       ) {
         fetch("http://localhost:9000/api/data", {
           method: "GET",
-          cache: "reload",
+          cache: "no-cache",
         })
           .then((res) => {
             return res.json();
           })
           .then((data) => {
-            console.log(data);
             setStudents(data);
           });
       }

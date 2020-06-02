@@ -59,3 +59,12 @@ export const allStudents = (state: any = [], action: TAction) => {
       return state;
   }
 };
+
+export const isAHeadOfGroup = (state: any = "", action: TAction) => {
+  switch (action.type) {
+    case "IS_A_HEAD_OF_GROUP":
+      return action.payload;
+    default:
+      return state;
+  }
+};

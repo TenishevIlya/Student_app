@@ -14,6 +14,7 @@ export interface IPostStudentFormState {
   groupNumber: TFormField;
   isAHeadOfGroup: number | null;
   ableToRedirect: boolean;
+  checkHeadOfGroup: string;
 }
 
 export type TStudent = {

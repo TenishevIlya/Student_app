@@ -83,9 +83,18 @@ app.get("/groupNumbers", (req, res) => {
 
 app.get("/getDirectionName", (req, res) => {
   connection.query(`SELECT * FROM directions`, (err, results) => {
-    console.log(results);
     res.status(200).json(results);
   });
+});
+
+app.get("/checkHeadOfGroup", (req, res) => {
+  const streamGroupNumber = req.headers.group.slice(1, 3);
+  connection.query(
+    `SELECT sum(case when Is_a_head_of_group = 1 then 1 else 0 end) HeadOfGroup FROM student WHERE Group_number='${streamGroupNumber}' AND Date_of_issue_of_student_ticket='${req.headers.issuedate}'`,
+    (err, results) => {
+      res.status(200).json(results);
+    }
+  );
 });
 
 app.get("/getJustCourse", (req, res) => {
@@ -127,7 +136,6 @@ app.get("/currentGroup:surnames", (req, res) => {
 });
 
 app.get("/availableExams", (req, res) => {
-  console.log(req.headers);
   connection
     .query(
       `SELECT DISTINCT subject.Name, subject.Id FROM subject JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course = "${req.headers.examscourse}" AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = "${req.headers.examscourse}" ORDER BY subject.Name`
@@ -157,7 +165,6 @@ app.get("/getCurrentStudentExams", (req, res) => {
 
 app.post("/api/addStudent", (req, res) => {
   const streamGroupNumber = req.body.groupNumber.value.slice(1, 3);
-  console.log(req.body);
   connection
     .query(
       `INSERT INTO student(Surname,Name,Patronymic,Direction_code,Group_number,Gender,Date_of_birth,Number_of_student_ticket, Date_of_issue_of_student_ticket,Is_a_head_of_group)

@@ -25,7 +25,6 @@ class Students extends Component<IStudentProps, IStudentState> {
       })
       .then((data) => {
         this.setState({ directions: data });
-        console.log(data);
       });
   }
 
