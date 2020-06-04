@@ -3,6 +3,7 @@ const app = express();
 const mysqlRoute = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const fs = require("fs");
 
@@ -29,25 +30,71 @@ connection.query(
   }
 );
 
-app.get("/download", (req, res) => {
-  // console.log("get");
-  // fs.open("testFile.txt", "w", (err) => {
-  //   if (err) throw err;
-  //   console.log("File created");
-  // });
-  // fs.appendFile("testFile.txt", " This line is beyond the end.", (err) => {
-  //   if (err) throw err;
-  //   console.log("Data has been added!");
-  // });
-  res.sendFile(__dirname + "/testFile.txt");
+let outPutFile = "";
+
+app.get("/getReports", (req, res) => {
+  global.reportType = req.headers.reporttype;
+  switch (req.headers.reporttype) {
+    case "studentsWith4And5":
+      outPutFile = path.join(
+        __dirname + `/reportsFiles/studentsWith4And5.${req.headers.fileformat}`
+      );
+      connection.query(`SELECT * FROM studentwith4and5mark`, (err, results) => {
+        global.content = results;
+      });
+      break;
+    case "gender":
+      outPutFile = path.join(
+        __dirname + `/reportsFiles/genderAnalysis.${req.headers.fileformat}`
+      );
+      connection.query(
+        `SELECT * FROM allgroupsgenders WHERE current_group=${req.headers.gendergroup}`,
+        (err, results) => {
+          global.content = JSON.stringify(results);
+        }
+      );
+      break;
+  }
+  res.status(200).json(global.content);
 });
 
-// app.get("/api/yearChange", (req, res) => {
-//   connection.query(
-//     "UPDATE number_of_course SET Beginning_of_education=CONCAT(YEAR(Beginning_of_education)+1,'09', '01') WHERE Course_number=1 OR Course_number=2 OR Course_number=30 OR Course_number=4"
-//   );
-//   res.status(201);
-// });
+app.get("/reports", function (req, res) {
+  fs.truncate(outPutFile, 0, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  let finalData = "";
+
+  switch (global.reportType) {
+    case "studentsWith4And5":
+      global.content.map((student) => {
+        finalData += student.Surname + " ";
+        finalData += student.Name + " ";
+        finalData += student.Patronymic + " ";
+        finalData += student.group_number;
+        finalData += "\n";
+      });
+      break;
+    case "gender":
+      console.log(global.content);
+      const genderData = JSON.parse(global.content);
+      finalData += `Номер группы:${genderData[0].current_group}`;
+      finalData += "\n";
+      finalData += `Юношей:${genderData[0].Men}`;
+      finalData += "\n";
+      finalData += `Девушек:${genderData[0].Women}`;
+      break;
+  }
+
+  fs.appendFile(outPutFile, finalData, (err, data) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  res.download(outPutFile);
+});
 
 app.get("/api/data", (req, res) => {
   connection.query(
@@ -92,6 +139,7 @@ app.get("/checkHeadOfGroup", (req, res) => {
   connection.query(
     `SELECT sum(case when Is_a_head_of_group = 1 then 1 else 0 end) HeadOfGroup FROM student WHERE Group_number='${streamGroupNumber}' AND Date_of_issue_of_student_ticket='${req.headers.issuedate}'`,
     (err, results) => {
+      console.log(results);
       res.status(200).json(results);
     }
   );
@@ -190,7 +238,6 @@ app.post("/api/addGroup", (req, res) => {
 });
 
 app.post("/api/addDirection", (req, res) => {
-  console.log(req.body);
   connection.query(
     `INSERT INTO directions(Name, Code_of_direction) VALUES("${req.body.directionName}","${req.body.directionCode}")`,
     (err, results) => {

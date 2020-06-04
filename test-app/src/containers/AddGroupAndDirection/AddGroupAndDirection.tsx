@@ -5,6 +5,8 @@ import {
 } from "./AddGroupAndDirection.type";
 import { Col, Form, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import store from "../../store/store";
+import { IS_A_HEAD_OF_GROUP } from "../../store/actions";
 
 class AddGroupAndDirection extends Component<
   IAddGroupAndDirectionProps,
@@ -47,6 +49,8 @@ class AddGroupAndDirection extends Component<
         directionCode: this.state.directionCode,
       }),
     }).then((res) => {
+      //store.dispatch(IS_A_HEAD_OF_GROUP("0"));
+      localStorage.setItem("newGroup", "added");
       return res.json();
     });
   }

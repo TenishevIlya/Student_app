@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { Form, Container, Row, Col, Button } from "react-bootstrap";
-import { Link, withRouter, RouteComponentProps } from "react-router-dom";
+import {
+  Link,
+  withRouter,
+  RouteComponentProps,
+  Redirect,
+} from "react-router-dom";
 import { setAllBachelorGroups } from "../../utils/setAllBachelorGroups";
 import { backFormateDate } from "../../utils/formatDate";
 import store from "../../store/store";
@@ -78,24 +83,77 @@ class PostStudentForm extends Component<
     }
 
     this.sendStudentData = this.sendStudentData.bind(this);
+    this.getHeadOfGroupData = this.getHeadOfGroupData.bind(this);
   }
 
   sendStudentData = () => {
-    const url = `http://localhost:9000/api${this.props.history.pathname}`;
-    const currentMethod =
-      this.props.history.pathname === "/editStudent" ? "PUT" : "POST";
-    fetch(url, {
-      headers: { "Content-Type": "application/json" },
-      method: currentMethod,
-      body: JSON.stringify(this.state),
+    this.getHeadOfGroupData();
+    if (this.props.history.pathname === "/editStudent") {
+      const url = `http://localhost:9000/api${this.props.history.pathname}`;
+      const currentMethod =
+        this.props.history.pathname === "/editStudent" ? "PUT" : "POST";
+      fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        method: currentMethod,
+        body: JSON.stringify(this.state),
+        cache: "reload",
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          store.dispatch(CHANGE_GROUP("All students"));
+          store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
+          window.location.assign("http://localhost:3000/");
+        });
+    } else {
+      if (
+        (store.getState().checkHeadOfGroup !== "1" &&
+          Number(this.state.isAHeadOfGroup) !== 1) ||
+        (store.getState().checkHeadOfGroup === "1" &&
+          Number(this.state.isAHeadOfGroup) !== 1) ||
+        localStorage.getItem("newGroup") ||
+        (store.getState().checkHeadOfGroup !== "1" &&
+          Number(this.state.isAHeadOfGroup) === 1)
+      ) {
+        // const url = `http://localhost:9000/api${this.props.history.pathname}`;
+        // fetch(url, {
+        //   headers: { "Content-Type": "application/json" },
+        //   method: "POST",
+        //   body: JSON.stringify(this.state),
+        //   cache: "reload",
+        // })
+        //   .then((res) => {
+        //     return res.json();
+        //   })
+        //   .then((data) => {
+        //     store.dispatch(CHANGE_GROUP("All students"));
+        //     store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
+        //     localStorage.removeItem("newGroup");
+        //   });
+        console.log(this.props);
+        //this.props.history.push("http://localhost:3000/");
+        //window.location.assign("http://localhost:3000/");
+      } else {
+        alert("В этой группе уже есть староста");
+      }
+    }
+  };
+
+  getHeadOfGroupData = () => {
+    fetch("http://localhost:9000/checkHeadOfGroup", {
+      method: "GET",
+      headers: {
+        issueDate: this.state.dateOfIssueOfStudentTicket.value,
+        group: this.state.groupNumber.value,
+      },
       cache: "reload",
     })
       .then((res) => {
         return res.json();
       })
       .then((data) => {
-        store.dispatch(CHANGE_GROUP("All students"));
-        store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
+        store.dispatch(IS_A_HEAD_OF_GROUP(data[0].HeadOfGroup));
       });
   };
 
@@ -113,20 +171,9 @@ class PostStudentForm extends Component<
         this.setState({ groupNumbers: groups.sort() });
       });
 
-    fetch("http://localhost:9000/checkHeadOfGroup", {
-      method: "GET",
-      headers: {
-        issueDate: this.state.dateOfIssueOfStudentTicket.value,
-        group: this.state.groupNumber.value,
-      },
-      cache: "reload",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        store.dispatch(IS_A_HEAD_OF_GROUP(data[0].HeadOfGroup));
-      });
+    if (this.props.history.pathname === "/editStudent") {
+      this.getHeadOfGroupData();
+    }
   }
 
   render() {
@@ -491,11 +538,11 @@ class PostStudentForm extends Component<
               ))}
             </Col>
           </Row>
-          <Link to="/">
-            <Button variant="secondary" block onClick={this.sendStudentData}>
-              {this.props.submitBtnTitle}
-            </Button>
-          </Link>
+          {/* <Link to={store.getState().checkHeadOfGroup === "1" ? "#" : "/"}> */}
+          <Button variant="secondary" block onClick={this.sendStudentData}>
+            {this.props.submitBtnTitle}
+          </Button>
+          {/* </Link> */}
           {this.props.history.pathname === "/addStudent" ? (
             <Link to="/addGroupAndDirection">
               Не нашли подходящей группы в списке? Вы можете добавить информацию
