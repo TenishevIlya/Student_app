@@ -32,6 +32,7 @@ export type TGroup = {
 
 export type TSurname = {
   Surname: string;
+  Name: string;
 };
 
 export type TExamNames = {

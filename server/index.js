@@ -54,6 +54,17 @@ app.get("/getReports", (req, res) => {
         }
       );
       break;
+    case "subjectMarks":
+      outPutFile = path.join(
+        __dirname + `/reportsFiles/subjectMarks.${req.headers.fileformat}`
+      );
+      connection.query(
+        `SELECT Mark, Mark_quantity, Name, Date_of_issue_of_student_ticket FROM countmarks WHERE Id = "${req.headers.examid}" AND Date_of_issue_of_student_ticket='${req.headers.issuedate}'`,
+        (err, results) => {
+          global.content = JSON.stringify(results);
+        }
+      );
+      break;
   }
   res.status(200).json(global.content);
 });
@@ -78,13 +89,20 @@ app.get("/reports", function (req, res) {
       });
       break;
     case "gender":
-      console.log(global.content);
       const genderData = JSON.parse(global.content);
       finalData += `Номер группы:${genderData[0].current_group}`;
       finalData += "\n";
       finalData += `Юношей:${genderData[0].Men}`;
       finalData += "\n";
       finalData += `Девушек:${genderData[0].Women}`;
+      break;
+    case "subjectMarks":
+      const marksData = JSON.parse(global.content);
+      for (let i = 0; i < marksData.length; i++) {
+        finalData += `Оценка:${marksData[i].Mark}`;
+        finalData += `Частота:${marksData[i].Mark_quantity}`;
+        finalData += "\n";
+      }
       break;
   }
 
@@ -167,7 +185,7 @@ app.get("/currentGroup:surnames", (req, res) => {
   if (req.headers.course === "4") {
     connection
       .query(
-        `SELECT DISTINCT Surname, Direction_code FROM student JOIN number_of_course WHERE (student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education) OR (DATEDIFF(NOW(),student.Date_of_issue_of_student_ticket) >= 4*365 && student.Group_number = ${req.headers.group}) ORDER BY Surname`
+        `SELECT DISTINCT Surname, Direction_code, Name FROM student JOIN number_of_course WHERE (student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education) OR (DATEDIFF(NOW(),student.Date_of_issue_of_student_ticket) >= 4*365 && student.Group_number = ${req.headers.group}) ORDER BY Surname`
       )
       .then((results) => {
         res.status(200).json(results[0]);
@@ -175,7 +193,7 @@ app.get("/currentGroup:surnames", (req, res) => {
   } else {
     connection
       .query(
-        `SELECT DISTINCT Surname, Direction_code FROM student JOIN number_of_course WHERE student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY Surname`
+        `SELECT DISTINCT Surname, Direction_code, Name FROM student JOIN number_of_course WHERE student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY Surname`
       )
       .then((results) => {
         res.status(200).json(results[0]);
@@ -184,6 +202,7 @@ app.get("/currentGroup:surnames", (req, res) => {
 });
 
 app.get("/availableExams", (req, res) => {
+  console.log(req.headers);
   connection
     .query(
       `SELECT DISTINCT subject.Name, subject.Id FROM subject JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course = "${req.headers.examscourse}" AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = "${req.headers.examscourse}" ORDER BY subject.Name`

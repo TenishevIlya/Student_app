@@ -88,7 +88,7 @@ class AddExam extends Component<{}, IAddExamState> {
         this.setState({
           ableToContinue: true,
           allSurnames: data,
-          studentSurname: data[0].Surname,
+          studentSurname: `${data[0].Surname} ${data[0].Name}`,
         });
       });
     fetch("http://localhost:9000/availableExams", {
@@ -241,7 +241,7 @@ class AddExam extends Component<{}, IAddExamState> {
           {this.state.ableToContinue && this.state.currentCourse !== 0 ? (
             <>
               <Form.Group controlId="formGroupNumbers">
-                <Form.Label>Фамилия студента</Form.Label>
+                <Form.Label>Фамилия и имя студента</Form.Label>
                 <Form.Control
                   as="select"
                   custom
@@ -257,7 +257,7 @@ class AddExam extends Component<{}, IAddExamState> {
                         key={`${surname.Surname}$#!@!`}
                         value={`${surname.Surname}`}
                       >
-                        {`${surname.Surname}`}
+                        {`${surname.Surname} ${surname.Name}`}
                       </option>
                     );
                   })}
