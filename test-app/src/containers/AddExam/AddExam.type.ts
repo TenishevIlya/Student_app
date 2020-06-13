@@ -23,7 +23,7 @@ export interface IAddExamState {
 }
 
 export type TCourse = {
-  Course_number: number;
+  //Course_number: number;
 };
 
 export type TGroup = {
@@ -33,6 +33,7 @@ export type TGroup = {
 export type TSurname = {
   Surname: string;
   Name: string;
+  Id: number;
 };
 
 export type TExamNames = {

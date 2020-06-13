@@ -111,29 +111,26 @@ class PostStudentForm extends Component<
         (store.getState().checkHeadOfGroup !== "1" &&
           Number(this.state.isAHeadOfGroup) !== 1) ||
         (store.getState().checkHeadOfGroup === "1" &&
-          Number(this.state.isAHeadOfGroup) !== 1) ||
-        localStorage.getItem("newGroup") ||
-        (store.getState().checkHeadOfGroup !== "1" &&
-          Number(this.state.isAHeadOfGroup) === 1)
+          Number(this.state.isAHeadOfGroup) !== 1)
       ) {
-        // const url = `http://localhost:9000/api${this.props.history.pathname}`;
-        // fetch(url, {
-        //   headers: { "Content-Type": "application/json" },
-        //   method: "POST",
-        //   body: JSON.stringify(this.state),
-        //   cache: "reload",
-        // })
-        //   .then((res) => {
-        //     return res.json();
-        //   })
-        //   .then((data) => {
-        //     store.dispatch(CHANGE_GROUP("All students"));
-        //     store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
-        //     localStorage.removeItem("newGroup");
-        //   });
-        console.log(this.props);
-        //this.props.history.push("http://localhost:3000/");
-        //window.location.assign("http://localhost:3000/");
+        const url = `http://localhost:9000/api${this.props.history.pathname}`;
+        fetch(url, {
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+          body: JSON.stringify(this.state),
+          cache: "reload",
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            store.dispatch(CHANGE_GROUP("All students"));
+            store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
+            localStorage.removeItem("newGroup");
+          });
+        store.dispatch(CHANGE_GROUP("All students"));
+        store.dispatch(CHANGE_LOCATION(this.props.history.pathname));
+        window.location.assign("http://localhost:3000/");
       } else {
         alert("В этой группе уже есть староста");
       }

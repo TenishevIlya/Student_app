@@ -103,6 +103,7 @@ app.get("/reports", function (req, res) {
         finalData += `Частота:${marksData[i].Mark_quantity}`;
         finalData += "\n";
       }
+      console.log(finalData);
       break;
   }
 
@@ -182,27 +183,18 @@ app.get("/getJustGroupNumber", (req, res) => {
 });
 
 app.get("/currentGroup:surnames", (req, res) => {
-  if (req.headers.course === "4") {
-    connection
-      .query(
-        `SELECT DISTINCT Surname, Direction_code, Name FROM student JOIN number_of_course WHERE (student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education) OR (DATEDIFF(NOW(),student.Date_of_issue_of_student_ticket) >= 4*365 && student.Group_number = ${req.headers.group}) ORDER BY Surname`
-      )
-      .then((results) => {
-        res.status(200).json(results[0]);
-      });
-  } else {
-    connection
-      .query(
-        `SELECT DISTINCT Surname, Direction_code, Name FROM student JOIN number_of_course WHERE student.Group_number = ${req.headers.group} and number_of_course.Course_number = ${req.headers.course} and student.Date_of_issue_of_student_ticket = number_of_course.Beginning_of_education ORDER BY Surname`
-      )
-      .then((results) => {
-        res.status(200).json(results[0]);
-      });
-  }
+  const year = new Date().getFullYear() - req.headers.course;
+  const dateForCertainGroup = `${year}-09-01`;
+  connection
+    .query(
+      `SELECT * FROM student WHERE student.Group_number = "${req.headers.group}" and (student.Date_of_issue_of_student_ticket = "${dateForCertainGroup}" OR (student.Date_of_issue_of_student_ticket < "${dateForCertainGroup}" AND ${req.headers.course} = 4)) ORDER BY student.Group_number,Surname`
+    )
+    .then((results) => {
+      res.status(200).json(results[0]);
+    });
 });
 
 app.get("/availableExams", (req, res) => {
-  console.log(req.headers);
   connection
     .query(
       `SELECT DISTINCT subject.Name, subject.Id FROM subject JOIN student ON Direction_code WHERE subject.Study_direction_code = "${req.headers.directioncode}" AND subject.Number_of_course = "${req.headers.examscourse}" AND student.Group_number="${req.headers.group}" AND subject.Number_of_course = "${req.headers.examscourse}" ORDER BY subject.Name`
@@ -266,20 +258,12 @@ app.post("/api/addDirection", (req, res) => {
 });
 
 app.post("/api/addExam", (req, res) => {
-  let id = 0;
   connection
-    .query(`SELECT Id FROM student WHERE Surname="${req.body.student}"`)
+    .query(
+      `INSERT INTO exam(Date,Subject_id,Student_id,Points,Mark) VALUES ("${req.body.date}","${req.body.subjectId}","${req.body.student}","${req.body.points}","${req.body.mark}")`
+    )
     .then((results) => {
-      for (key in results[0]) {
-        id = results[0][key].Id;
-      }
-      connection
-        .query(
-          `INSERT INTO exam(Date,Subject_id,Student_id,Points,Mark) VALUES ("${req.body.date}","${req.body.subjectId}","${id}","${req.body.points}","${req.body.mark}")`
-        )
-        .then((results) => {
-          res.status(201).json(results);
-        });
+      res.status(201).json(results);
     });
 });
 

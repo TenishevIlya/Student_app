@@ -39,16 +39,17 @@ class AddExam extends Component<{}, IAddExamState> {
 
   componentDidMount() {
     //отдельно подтягиваем данные о курсах
-    fetch("http://localhost:9000/getJustCourse", {
-      method: "GET",
-      cache: "reload",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        this.setState({ allCourses: data });
-      });
+    // fetch("http://localhost:9000/getJustCourse", {
+    //   method: "GET",
+    //   cache: "reload",
+    // })
+    //   .then((res) => {
+    //     return res.json();
+    //   })
+    //   .then((data) => {
+    //     this.setState({ allCourses: data });
+    //   });
+    this.setState({ allCourses: [1, 2, 3, 4] });
     //отдельно о группах
     fetch("http://localhost:9000/getJustGroupNumber", {
       method: "GET",
@@ -88,7 +89,7 @@ class AddExam extends Component<{}, IAddExamState> {
         this.setState({
           ableToContinue: true,
           allSurnames: data,
-          studentSurname: `${data[0].Surname} ${data[0].Name}`,
+          studentSurname: `${data[0].Id}`,
         });
       });
     fetch("http://localhost:9000/availableExams", {
@@ -124,7 +125,7 @@ class AddExam extends Component<{}, IAddExamState> {
     this.state.examNames.map((exam) => {
       if (exam.Id == this.state.subjectId) {
         isAnyError = validateExamDate(
-          exam.Number_of_course,
+          this.state.examsCourse,
           this.state.currentCourse,
           this.state.dateOfExam
         );
@@ -175,11 +176,8 @@ class AddExam extends Component<{}, IAddExamState> {
             >
               {this.state.allCourses?.map((course) => {
                 return (
-                  <option
-                    key={`${course.Course_number}$#!@!`}
-                    value={`${course.Course_number}`}
-                  >
-                    {`${course.Course_number}`}
+                  <option key={`${course}$#!@!`} value={`${course}`}>
+                    {`${course}`}
                   </option>
                 );
               })}
@@ -205,7 +203,6 @@ class AddExam extends Component<{}, IAddExamState> {
               }}
             >
               {this.state.allGroups?.map((group) => {
-                //const fullGroupNumber = `${group.Course_number}${group.Group_number}`;
                 return (
                   <option
                     key={`${group.Group_number}$#!@!`}
@@ -249,13 +246,14 @@ class AddExam extends Component<{}, IAddExamState> {
                     this.setState({
                       studentSurname: event.target.value,
                     });
+                    console.log(event.target.value);
                   }}
                 >
                   {this.state.allSurnames?.map((surname, index) => {
                     return (
                       <option
                         key={`${surname.Surname}$#!@!`}
-                        value={`${surname.Surname}`}
+                        value={`${surname.Id}`}
                       >
                         {`${surname.Surname} ${surname.Name}`}
                       </option>
